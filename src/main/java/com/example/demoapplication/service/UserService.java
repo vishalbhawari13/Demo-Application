@@ -4,6 +4,9 @@ import com.example.demoapplication.dto.UserDTO;
 import com.example.demoapplication.entity.User;
 import com.example.demoapplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +37,7 @@ public class UserService {
 
 
     //GetById
+    @Cacheable(value = "users",key = "#id")
     public User getUserById(Long id)
     {
        return  userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found"));
@@ -41,6 +45,7 @@ public class UserService {
 
 
     //UpdateUserbYId
+    @CachePut(value = "users",key = "#id")
     public User updateUser(Long id,UserDTO userDTO)
     {
         User existingUser = userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found"));
@@ -54,6 +59,7 @@ public class UserService {
     }
 
     //DeleteUser
+    @CacheEvict(value = "users",key = "#id")
     public void deleteUser(Long id)
     {
         userRepository.deleteById(id);
