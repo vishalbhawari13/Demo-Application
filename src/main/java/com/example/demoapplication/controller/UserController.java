@@ -1,7 +1,9 @@
 package com.example.demoapplication.controller;
 
+import com.example.demoapplication.dto.UserDTO;
 import com.example.demoapplication.entity.User;
 import com.example.demoapplication.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +20,9 @@ public class UserController {
 
     //create user
     @PostMapping("/add")
-    public User addUser(@RequestBody User user)
+    public User addUser(@Valid @RequestBody UserDTO  userDTO)
     {
-        return userService.createUser(user);
+        return userService.createUser(userDTO);
     }
 
     //find all user
@@ -40,9 +42,9 @@ public class UserController {
 
     //update user by id
     @PutMapping("/update/{id}")
-    public User updateUser(@PathVariable Long id,@RequestBody User user)
+    public User updateUser(@PathVariable Long id,@Valid @RequestBody UserDTO  userDTO)
     {
-        return userService.updateUser(id,user);
+        return userService.updateUser(id,userDTO);
     }
 
     //delete user by id

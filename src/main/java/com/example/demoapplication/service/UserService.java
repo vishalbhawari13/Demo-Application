@@ -1,5 +1,6 @@
 package com.example.demoapplication.service;
 
+import com.example.demoapplication.dto.UserDTO;
 import com.example.demoapplication.entity.User;
 import com.example.demoapplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,14 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    //CREATE
-    public User createUser(User user)
+    //CREATE -> Accept DTO
+    public User createUser(UserDTO userDTO)
     {
+        User user = new User();
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        user.setAge(userDTO.getAge());
+
         return userRepository.save(user);
     }
 
@@ -35,15 +41,15 @@ public class UserService {
 
 
     //UpdateUserbYId
-    public User updateUser(Long id,User userDetails)
+    public User updateUser(Long id,UserDTO userDTO)
     {
-        User user = userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found"));
+        User existingUser = userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found"));
 
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        user.setAge(userDetails.getAge());
+        existingUser.setName(userDTO.getName());
+        existingUser.setEmail(userDTO.getEmail());
+        existingUser.setAge(userDTO.getAge());
 
-       return userRepository.save(user);
+       return userRepository.save(existingUser);
 
     }
 
