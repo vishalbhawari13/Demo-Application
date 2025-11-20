@@ -2,6 +2,7 @@ package com.example.demoapplication.service;
 
 import com.example.demoapplication.dto.UserDTO;
 import com.example.demoapplication.entity.User;
+import com.example.demoapplication.exception.ResourceNotFoundException;
 import com.example.demoapplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -40,7 +41,7 @@ public class UserService {
     @Cacheable(value = "users",key = "#id")
     public User getUserById(Long id)
     {
-       return  userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found"));
+       return  userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found"+id));
     }
 
 
@@ -48,7 +49,7 @@ public class UserService {
     @CachePut(value = "users",key = "#id")
     public User updateUser(Long id,UserDTO userDTO)
     {
-        User existingUser = userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found"));
+        User existingUser = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("user not found"+id));
 
         existingUser.setName(userDTO.getName());
         existingUser.setEmail(userDTO.getEmail());
@@ -62,6 +63,10 @@ public class UserService {
     @CacheEvict(value = "users",key = "#id")
     public void deleteUser(Long id)
     {
+        if(!userRepository.existsById(id))
+        {
+            throw new ResourceNotFoundException("User not found with id "+id);
+        }
         userRepository.deleteById(id);
     }
 }
